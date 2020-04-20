@@ -17,4 +17,7 @@ _build
 *.iml
 rebar3.crashdump
 rebar.lock
+
+config/sys.config
+config/vm.args
 *~

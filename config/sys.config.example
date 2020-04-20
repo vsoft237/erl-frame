@@ -1,14 +1,16 @@
 [
-  	{erl_frame, []},
-
 	{tcp, [
-        {ports, [
-            {port1, [
-                {port, 30001},
-                {type, normal}
-            ]}
-        ]}
-    ]},
+		{ports, [
+ 			{port1, [
+				{port, 30001},
+ 				{type, normal}
+ 			]},
+ 			{port2, [
+				{port, 30002},
+ 				{type, web}
+ 			]}
+ 		]}
+	]},
 
     {db, [
         {pools, [
