@@ -1,2 +1,9 @@
-# erl-frame
-rebar3 simple frame
+main
+=====
+
+An OTP application
+
+Build
+-----
+
+    $ rebar3 compile
