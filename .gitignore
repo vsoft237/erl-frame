@@ -21,3 +21,4 @@ rebar.lock
 config/sys.config
 config/vm.args
 *~
+test
