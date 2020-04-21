@@ -1,6 +1,0 @@
--sname erl_frame
-
--setcookie erl_frame_cookie
-
-+K true
-+A30
