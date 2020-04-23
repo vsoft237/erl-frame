@@ -27,8 +27,8 @@ start_link(ID, SockPID) ->
 init([ID, SockPID]) ->
    	process_flag(trap_exit, true),
 	link(SockPID),
-	main:register(ID, self()),
-	main:init(ID),
+	main_mgr:register(ID, self()),
+	main_internal:init(ID),
 	{ok, #state{id = ID, sock_pid = SockPID}}. 
 
 %%%===================================================================
@@ -51,14 +51,14 @@ handle_cast({cmd, {Cmd, DataIn}}, #state{sock_pid = SockPID} = State) ->
 		noreply ->
 			ok;
 		{ok, DataOut} ->
-			response:send_data(SockPID, Cmd, DataOut);
+			main_internal:send_data(SockPID, Cmd, DataOut);
 		{error, ErrorCode} ->
-			response:send_error(SockPID, Cmd, ErrorCode)
+			main_internal:send_error(SockPID, Cmd, ErrorCode)
 	end,	
 	{noreply, State};
 
-handle_cast({send_data, {Cmd, Data}}, #state{sock_pid = SockPID} = State) ->
-	response:send_data(SockPID, Cmd, Data),
+handle_cast({response, Bin}, #state{sock_pid = SockPID} = State) ->
+	tcp_response:send(SockPID, Bin),
 	{noreply, State};
 
 handle_cast({mfa, {M, F, A}}, State) ->
@@ -77,7 +77,7 @@ handle_info({mfa, {M, F, A}}, State) ->
 	{noreply, State};
 
 handle_info(kill, State) ->
-	{stop, normal, State};
+	{stop, kill, State};
 
 handle_info({'EXIT', _PID, _Reason}, State) ->
     erlang:send_after(?RECONNECT_TIME, self(), kill),
@@ -87,8 +87,8 @@ handle_info(_Info, State) ->
 	{noreply, State}.
 
 terminate(_Reason, #state{id = ID}) ->
-	main:unregister(ID),
-	main:terminate(ID),
+	main_mgr:unregister(ID),
+	main_internal:terminate(ID),
 	ok.
 
 code_change(_OldVsn, State, _Extra) ->

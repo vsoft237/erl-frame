@@ -4,7 +4,7 @@
 
 %% API
 -export([start_link/0]).
--export([register/2, unregister/1, get_pid/1, get_all/0]).
+-export([register/2, unregister/1, get_pid/1, get_all/0, get_all_id/0]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
@@ -39,6 +39,10 @@ get_pid(ID) ->
 
 get_all() ->
 	ets:tab2list(main_pid).
+
+get_all_id() ->
+	List = get_all(),
+	[ID || #main_pid{id = ID} <- List].
 
 %%%===================================================================
 %%% gen_server callbacks
