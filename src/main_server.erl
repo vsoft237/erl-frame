@@ -29,7 +29,7 @@ init([ID, SockPID]) ->
 	link(SockPID),
 	main:register(ID, self()),
 	main_interface:init(ID),
-	{ok, #state{id = ID, sock_pid = SockPID}. 
+	{ok, #state{id = ID, sock_pid = SockPID}}. 
 
 %%%===================================================================
 %%% call 
@@ -46,19 +46,19 @@ handle_call(_Request, _From, State) ->
 %%% cast 
 %%%===================================================================
 
-handle_cast({cmd, {Cmd, DataIn}}, {sock_pid = SockPID} = State) ->
+handle_cast({cmd, {Cmd, DataIn}}, #state{sock_pid = SockPID} = State) ->
 	case main_cmd:handle(Cmd, DataIn) of
 		noreply ->
 			ok;
 		{ok, DataOut} ->
 			response:send_data(SockPID, Cmd, DataOut);
 		{error, ErrorCode} ->
-			response:send_error(SockPID, Cmd, ErrorCode);
+			response:send_error(SockPID, Cmd, ErrorCode)
 	end,	
 	{noreply, State};
 
-handle_cast({send_data, {Cmd, Data}, {sock_pid = SockPID} = State) ->
-	response:send_data(SockPID, Cmd, Data);
+handle_cast({send_data, {Cmd, Data}}, #state{sock_pid = SockPID} = State) ->
+	response:send_data(SockPID, Cmd, Data),
 	{noreply, State};
 
 handle_cast({mfa, {M, F, A}}, State) ->
@@ -79,14 +79,14 @@ handle_info({mfa, {M, F, A}}, State) ->
 handle_info(kill, State) ->
 	{stop, normal, State};
 
-handle_info({'EXIT', PID, _Reason}, State) ->
+handle_info({'EXIT', _PID, _Reason}, State) ->
     erlang:send_after(?RECONNECT_TIME, self(), kill),
     {noreply, State};
 
 handle_info(_Info, State) ->
 	{noreply, State}.
 
-terminate(_Reason, {id = ID} = State) ->
+terminate(_Reason, #state{id = ID}) ->
 	main_interface:terminate(ID),
 	ok.
 
