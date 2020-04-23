@@ -3,7 +3,7 @@
 -behaviour(gen_server).
 
 %% API
--export([start_link/0]).
+-export([start_link/2]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
@@ -17,8 +17,8 @@
 %%% API
 %%%===================================================================
 
-start_link() ->
-	gen_server:start_link(?MODULE, [], []).
+start_link(ID, SockPID) ->
+	gen_server:start_link(?MODULE, [ID, SockPID], []).
 
 %%%===================================================================
 %%% gen_server callbacks
@@ -87,7 +87,8 @@ handle_info(_Info, State) ->
 	{noreply, State}.
 
 terminate(_Reason, #state{id = ID}) ->
-	main_interface:terminate(ID),
+	main:unregister(ID),
+	main:terminate(ID),
 	ok.
 
 code_change(_OldVsn, State, _Extra) ->

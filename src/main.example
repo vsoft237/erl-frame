@@ -1,0 +1,28 @@
+-module(main).
+
+%% ===========================API============================
+-export([register/2, unregister/1, get_pid/1, get_all/0]).
+-export([init/1, terminate/1).
+
+register(ID, PID) ->
+	main_mgr:register(ID, PID).
+
+unregister(ID) ->
+	main_mgr:unregister(ID).
+
+get_pid(ID) ->
+	main_mgr:get_pid(ID).
+
+get_all() ->
+	main_mgr:get_all().
+
+init(ID) ->
+	%% TODO: Write your code here
+	ok.
+
+terminate(ID) ->
+	%% TODO: Write your code here
+	ok.
+
+%% ===========================Internal============================
+
