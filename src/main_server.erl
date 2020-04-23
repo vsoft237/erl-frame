@@ -28,7 +28,7 @@ init([ID, SockPID]) ->
    	process_flag(trap_exit, true),
 	link(SockPID),
 	main:register(ID, self()),
-	main_interface:init(ID),
+	main:init(ID),
 	{ok, #state{id = ID, sock_pid = SockPID}}. 
 
 %%%===================================================================
