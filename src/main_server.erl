@@ -26,8 +26,7 @@ start_link(ID, SockPID) ->
 
 init([ID, SockPID]) ->
    	process_flag(trap_exit, true),
-	link(SockPID),
-	main_mgr:register(ID, self()),
+	register_pid(ID, self()),
 	main_internal:init(ID),
 	{ok, #state{id = ID, sock_pid = SockPID}}. 
 
@@ -98,4 +97,10 @@ code_change(_OldVsn, State, _Extra) ->
 %%% Internal functions
 %%%===================================================================
 
+register_pid(ID, SockPID) ->
+	Self = self(),
+	link(SockPID),
+	main_mgr:register(ID, Self),
+	Msg = {save_main_pid, Self}, 
+	SockPID ! Msg.
 
