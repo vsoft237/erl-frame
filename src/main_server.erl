@@ -26,7 +26,7 @@ start_link(ID, SockPID) ->
 
 init([ID, SockPID]) ->
    	process_flag(trap_exit, true),
-	register_pid(ID, self()),
+	register_pid(ID, SockPID),
 	main_internal:init(ID),
 	{ok, #state{id = ID, sock_pid = SockPID}}. 
 
