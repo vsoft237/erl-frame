@@ -45,8 +45,8 @@ handle_call(_Request, _From, State) ->
 %%% cast 
 %%%===================================================================
 
-handle_cast({cmd, {Cmd, DataIn}}, #state{sock_pid = SockPID} = State) ->
-	case main_cmd:handle(Cmd, DataIn) of
+handle_cast({cmd, {Cmd, DataIn}}, #state{id = ID, sock_pid = SockPID} = State) ->
+	case main_cmd:handle(Cmd, DataIn, ID) of
 		noreply ->
 			ok;
 		{ok, DataOut} ->
